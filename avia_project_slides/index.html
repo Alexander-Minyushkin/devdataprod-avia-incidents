@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Avia incidents investigation time</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Avia incidents investigation time">
+  <meta name="author" content="Alexander Minyushkin">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Avia incidents investigation time</h1>
+    <h2>Slides for Coursera &quot;Developing Data Products&quot; peer review</h2>
+    <p>Alexander Minyushkin<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Introduction</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>After crash of Malaysia Airlines Flight MH17 on 2014 July 17, there were many complaints that investiagtion takes too long time.</p>
+
+<p>So I decide to take a look at statistics and get some understanding of reasonable time for aviation incidents investigations.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Using Google search I found some relevant open data here <a href="http://catalog.data.gov/dataset/ntsb-aviation-accident-database-extract-of-aviation-accident-records-since-1982--ntsb-1962">http://catalog.data.gov/dataset/ntsb-aviation-accident-database-extract-of-aviation-accident-records-since-1982--ntsb-1962</a></p>
+
+<p>XML file is pretty big, so here you can see how it looks like in general:</p>
+
+<pre><code class="r">cat(paste(readLines(&quot;AviationData_sample.xml&quot;), sep=&quot;\n&quot;))
+</code></pre>
+
+<pre><code>## &lt;DATA xmlns=&quot;http://www.ntsb.gov&quot;&gt; &lt;ROWS&gt; &lt;ROW EventId=&quot;20140816X62709&quot; InvestigationType=&quot;Accident&quot; AccidentNumber=&quot;WPR14CA348&quot; EventDate=&quot;08/16/2014&quot; Location=&quot;Opheim, MT&quot; Country=&quot;United States&quot; Latitude=&quot;&quot; Longitude=&quot;&quot; AirportCode=&quot;&quot; AirportName=&quot;&quot; InjurySeverity=&quot;&quot; AircraftDamage=&quot;&quot; AircraftCategory=&quot;&quot; RegistrationNumber=&quot;N4709Z&quot; Make=&quot;PIPER&quot; Model=&quot;PA 22-108&quot; AmateurBuilt=&quot;&quot; NumberOfEngines=&quot;&quot; EngineType=&quot;&quot; FARDescription=&quot;&quot; Schedule=&quot;&quot; PurposeOfFlight=&quot;&quot; AirCarrier=&quot;&quot; TotalFatalInjuries=&quot;&quot; TotalSeriousInjuries=&quot;&quot; TotalMinorInjuries=&quot;&quot; TotalUninjured=&quot;&quot; WeatherCondition=&quot;&quot; BroadPhaseOfFlight=&quot;&quot; ReportStatus=&quot;Preliminary&quot; PublicationDate=&quot;&quot; /&gt; &lt;ROW EventId=&quot;20140813X65210&quot; InvestigationType=&quot;Accident&quot; AccidentNumber=&quot;WPR14LA345&quot; EventDate=&quot;2014-08-13&quot; Location=&quot;Salmon, ID&quot; Country=&quot;United States&quot; Latitude=&quot;45.120834&quot; Longitude=&quot;-113.875278&quot; AirportCode=&quot;KSMN&quot; AirportName=&quot;Lemhi County Airport&quot; InjurySeverity=&quot;Non-Fatal&quot; AircraftDamage=&quot;Substantial&quot; AircraftCategory=&quot;Airplane&quot; RegistrationNumber=&quot;N2190H&quot; Make=&quot;PIPER&quot; Model=&quot;PA 28-236&quot; AmateurBuilt=&quot;No&quot; NumberOfEngines=&quot;1&quot; EngineType=&quot;Reciprocating&quot; FARDescription=&quot;Part 91: General Aviation&quot; Schedule=&quot;&quot; PurposeOfFlight=&quot;Personal&quot; AirCarrier=&quot;&quot; TotalFatalInjuries=&quot;&quot; TotalSeriousInjuries=&quot;&quot; TotalMinorInjuries=&quot;1&quot; TotalUninjured=&quot;1&quot; WeatherCondition=&quot;VMC&quot; BroadPhaseOfFlight=&quot;&quot; ReportStatus=&quot;Preliminary&quot; PublicationDate=&quot;2014-08-16&quot; /&gt; &lt;/ROWS&gt; &lt;/DATA&gt;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Parsing Data</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Reading data using XML package</p>
+
+<pre><code class="r">library(XML)
+options(stringsAsFactors = FALSE)
+
+d &lt;- xmlParse(&quot;AviationData_sample.xml&quot;)
+
+els &lt;- getNodeSet(d, &quot;//x:ROW&quot;, &quot;x&quot;)
+attrs &lt;- sapply(els, function(x) xmlAttrs(x)) 
+
+out &lt;- data.frame(t(attrs))
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Parsing Data Continues</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>After brief review I found that dates in the file stored in different formats, so I make a function to correct this.</p>
+
+<pre><code class="r">converMixedDate &lt;- function(x){
+  y &lt;- strptime(x, tz = &quot;&quot;, &quot;%m/%d/%Y&quot; )  
+  y[is.na(y)] &lt;- strptime(x[is.na(y)], tz = &quot;&quot;, &quot;%Y-%m-%d&quot; )      
+  y
+
+}
+
+out$EventDate
+</code></pre>
+
+<pre><code>## [1] &quot;08/16/2014&quot; &quot;08/13/2014&quot;
+</code></pre>
+
+<pre><code class="r">converMixedDate(out$EventDate)
+</code></pre>
+
+<pre><code>## [1] &quot;2014-08-16 MSK&quot; &quot;2014-08-13 MSK&quot;
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Introduction'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Data'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Parsing Data'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Parsing Data Continues'>
+         4
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=5 title=''>
+         5
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>

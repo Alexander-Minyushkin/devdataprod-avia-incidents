@@ -2,6 +2,7 @@
 library(XML)
 library(ggplot2)
 library(shinyapps)
+library(slidify)
 
 Sys.setlocale("LC_TIME", "us")
 

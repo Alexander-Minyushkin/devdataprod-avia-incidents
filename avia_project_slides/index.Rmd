@@ -1,0 +1,79 @@
+---
+title       : Avia incidents investigation time
+subtitle    : Slides for Coursera "Developing Data Products" peer review
+author      : Alexander Minyushkin
+job         : 
+framework   : io2012        # {io2012, html5slides, shower, dzslides, ...}
+highlighter : highlight.js  # {highlight.js, prettify, highlight}
+hitheme     : tomorrow      # 
+widgets     : []            # {mathjax, quiz, bootstrap}
+mode        : selfcontained # {standalone, draft}
+knit        : slidify::knit2slides
+---
+
+## Introduction
+
+After crash of Malaysia Airlines Flight MH17 on 2014 July 17, there were many complaints that investiagtion takes too long time.
+
+So I decide to take a look at statistics and get some understanding of reasonable time for aviation incidents investigations.
+
+--- .class #id 
+
+## Data 
+
+Using Google search I found some relevant open data here http://catalog.data.gov/dataset/ntsb-aviation-accident-database-extract-of-aviation-accident-records-since-1982--ntsb-1962
+
+XML file is pretty big, so here you can see how it looks like in general:
+```{r}
+cat(paste(readLines("AviationData_sample.xml"), sep="\n"))
+
+```
+
+
+--- .class #id 
+
+## Parsing Data 
+
+Reading data using XML package
+
+```{r cache=FALSE}
+library(XML)
+options(stringsAsFactors = FALSE)
+
+d <- xmlParse("AviationData_sample.xml")
+
+els <- getNodeSet(d, "//x:ROW", "x")
+attrs <- sapply(els, function(x) xmlAttrs(x)) 
+
+out <- data.frame(t(attrs))
+
+```
+
+
+
+--- .class #id 
+
+
+## Parsing Data Continues
+
+After brief review I found that dates in the file stored in different formats, so I make a function to correct this.
+
+```{r}
+converMixedDate <- function(x){
+  y <- strptime(x, tz = "", "%m/%d/%Y" )  
+  y[is.na(y)] <- strptime(x[is.na(y)], tz = "", "%Y-%m-%d" )      
+  y
+  
+}
+
+out$EventDate
+
+converMixedDate(out$EventDate)
+
+```
+
+
+--- .class #id 
+
+
+

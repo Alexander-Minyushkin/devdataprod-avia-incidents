@@ -21,9 +21,9 @@ shinyUI(pageWithSidebar(
   # Show a plot of the generated distribution
   mainPanel(
     #verbatimTextOutput("summary"),
-    h5("Data collected from NTSB Aviation Accident Database"),
-    a("http://catalog.data.gov/dataset/ntsb-aviation-accident-database-extract-of-aviation-accident-records-since-1982--ntsb-1962",
-      href="http://catalog.data.gov/dataset/ntsb-aviation-accident-database-extract-of-aviation-accident-records-since-1982--ntsb-1962"),
+    h5("Documentation can be found here"),
+    a("https://github.com/Alexander-Minyushkin/devdataprod-avia-incidents",
+      href="https://github.com/Alexander-Minyushkin/devdataprod-avia-incidents"),
 
     br(),
     
