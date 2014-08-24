@@ -1,0 +1,16 @@
+{
+    "contents" : "<DATA xmlns=\"http://www.ntsb.gov\">\n<ROWS>\n<ROW EventId=\"20140816X62709\" EventDate=\"08/16/2014\" Location=\"Opheim, MT\" Country=\"United States\" Latitude=\"\" Longitude=\"\" AirportCode=\"\" AirportName=\"\" InjurySeverity=\"\" AircraftDamage=\"\" AircraftCategory=\"\" RegistrationNumber=\"N4709Z\" Make=\"PIPER\" Model=\"PA 22-108\" AmateurBuilt=\"\" NumberOfEngines=\"\" EngineType=\"\" FARDescription=\"\" Schedule=\"\" PurposeOfFlight=\"\" AirCarrier=\"\" TotalFatalInjuries=\"\" TotalSeriousInjuries=\"\" TotalMinorInjuries=\"\" TotalUninjured=\"\" WeatherCondition=\"\" BroadPhaseOfFlight=\"\" ReportStatus=\"Preliminary\" PublicationDate=\"\" />\n<ROW EventId=\"20140813X65210\" EventDate=\"2014-08-13\" Location=\"Salmon, ID\" Country=\"United States\" Latitude=\"45.120834\" Longitude=\"-113.875278\" AirportCode=\"KSMN\" AirportName=\"Lemhi County Airport\" InjurySeverity=\"Non-Fatal\" AircraftDamage=\"Substantial\" AircraftCategory=\"Airplane\" RegistrationNumber=\"N2190H\" Make=\"PIPER\" Model=\"PA 28-236\" AmateurBuilt=\"No\" NumberOfEngines=\"1\" EngineType=\"Reciprocating\" FARDescription=\"Part 91: General Aviation\" Schedule=\"\" PurposeOfFlight=\"Personal\" AirCarrier=\"\" TotalFatalInjuries=\"\" TotalSeriousInjuries=\"\" TotalMinorInjuries=\"1\" TotalUninjured=\"1\" WeatherCondition=\"VMC\" BroadPhaseOfFlight=\"\" ReportStatus=\"Preliminary\" PublicationDate=\"2014-08-16\" />\n</ROWS>\n</DATA>\n",
+    "created" : 1408800508360.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2537560409",
+    "id" : "10A7C4FA",
+    "lastKnownWriteTime" : 1408800527,
+    "path" : "~/GitHub/devdataprod-avia-incidents/avia_project_slides/AviationData_sample.xml",
+    "project_path" : "avia_project_slides/AviationData_sample.xml",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "xml"
+}

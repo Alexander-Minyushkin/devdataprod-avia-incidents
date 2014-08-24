@@ -24,8 +24,8 @@ So I decide to take a look at statistics and get some understanding of reasonabl
 Using Google search I found some relevant open data here http://catalog.data.gov/dataset/ntsb-aviation-accident-database-extract-of-aviation-accident-records-since-1982--ntsb-1962
 
 XML file is pretty big, so here you can see how it looks like in general:
-```{r}
-cat(paste(readLines("AviationData_sample.xml"), sep="\n"))
+```{r cache=FALSE}
+skipout<-lapply(readLines("AviationData_sample.xml"), function(x) cat(paste0(x, "\n")))
 
 ```
 
@@ -66,14 +66,38 @@ converMixedDate <- function(x){
   
 }
 
-out$EventDate
-
 converMixedDate(out$EventDate)
 
 ```
 
+Ignore timezone for now, it is not used later
 
 --- .class #id 
 
+## Data Cleanup
+
+When I found that there are still few dates was not processed properly I decided ti exclude them from data frame
+
+```{r eval = F}
+
+# Still have a mess in dates. Just clean them up for now
+out <- out[ !is.na(out$P_Date) & !is.na(out$E_Date),]
+
+out$investigationTimeDays <- as.numeric(out$P_Date - out$E_Date) / 24/3600
+
+# cleanup some more inconsystencies
+out <- out[out$investigationTimeDays>0,]
 
 
+```
+
+--- .class #id 
+
+## Results
+
+Now I can look at plots like this
+
+http://alexander.shinyapps.io/avia_project
+
+
+--- .class #id 

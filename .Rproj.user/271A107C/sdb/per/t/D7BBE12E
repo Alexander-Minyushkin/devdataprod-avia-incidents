@@ -1,0 +1,16 @@
+{
+    "contents" : "---\ntitle       : Avia incidents investigation time\nsubtitle    : Slides for Coursera \"Developing Data Products\" peer review\nauthor      : Alexander Minyushkin\njob         : \nframework   : io2012        # {io2012, html5slides, shower, dzslides, ...}\nhighlighter : highlight.js  # {highlight.js, prettify, highlight}\nhitheme     : tomorrow      # \nwidgets     : []            # {mathjax, quiz, bootstrap}\nmode        : selfcontained # {standalone, draft}\nknit        : slidify::knit2slides\n---\n\n## Introduction\n\nAfter crash of Malaysia Airlines Flight MH17 on 2014 July 17, there were many complaints that investiagtion takes too long time.\n\nSo I decide to take a look at statistics and get some understanding of reasonable time for aviation incidents investigations.\n\n--- .class #id \n\n## Data \n\nUsing Google search I found some relevant open data here http://catalog.data.gov/dataset/ntsb-aviation-accident-database-extract-of-aviation-accident-records-since-1982--ntsb-1962\n\nXML file is pretty big, so here you can see how it looks like in general:\n```{r cache=FALSE}\nskipout<-lapply(readLines(\"AviationData_sample.xml\"), function(x) cat(paste0(x, \"\\n\")))\n\n```\n\n\n--- .class #id \n\n## Parsing Data \n\nReading data using XML package\n\n```{r cache=FALSE}\nlibrary(XML)\noptions(stringsAsFactors = FALSE)\n\nd <- xmlParse(\"AviationData_sample.xml\")\n\nels <- getNodeSet(d, \"//x:ROW\", \"x\")\nattrs <- sapply(els, function(x) xmlAttrs(x)) \n\nout <- data.frame(t(attrs))\n\n```\n\n\n\n--- .class #id \n\n\n## Parsing Data Continues\n\nAfter brief review I found that dates in the file stored in different formats, so I make a function to correct this.\n\n```{r}\nconverMixedDate <- function(x){\n  y <- strptime(x, tz = \"\", \"%m/%d/%Y\" )  \n  y[is.na(y)] <- strptime(x[is.na(y)], tz = \"\", \"%Y-%m-%d\" )      \n  y\n  \n}\n\nconverMixedDate(out$EventDate)\n\n```\n\nIgnore timezone for now, it is not used later\n\n--- .class #id \n\n## Data Cleanup\n\nWhen I found that there are still few dates was not processed properly I decided ti exclude them from data frame\n\n```{r eval = F}\n\n# Still have a mess in dates. Just clean them up for now\nout <- out[ !is.na(out$P_Date) & !is.na(out$E_Date),]\n\nout$investigationTimeDays <- as.numeric(out$P_Date - out$E_Date) / 24/3600\n\n# cleanup some more inconsystencies\nout <- out[out$investigationTimeDays>0,]\n\n\n```\n\n--- .class #id \n\n## Results\n\nNow I can look at plots like this\n\nhttp://alexander.shinyapps.io/avia_project\n\n\n--- .class #id \n",
+    "created" : 1408800020584.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "3672959598",
+    "id" : "D7BBE12E",
+    "lastKnownWriteTime" : 1408801301,
+    "path" : "~/GitHub/devdataprod-avia-incidents/avia_project_slides/index.Rmd",
+    "project_path" : "avia_project_slides/index.Rmd",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_markdown"
+}

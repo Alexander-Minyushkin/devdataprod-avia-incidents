@@ -1,0 +1,9 @@
+{
+    "path" : "~/GitHub/devdataprod-avia-incidents",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}

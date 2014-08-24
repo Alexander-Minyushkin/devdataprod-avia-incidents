@@ -63,10 +63,15 @@
 
 <p>XML file is pretty big, so here you can see how it looks like in general:</p>
 
-<pre><code class="r">cat(paste(readLines(&quot;AviationData_sample.xml&quot;), sep=&quot;\n&quot;))
+<pre><code class="r">skipout&lt;-lapply(readLines(&quot;AviationData_sample.xml&quot;), function(x) cat(paste0(x, &quot;\n&quot;)))
 </code></pre>
 
-<pre><code>## &lt;DATA xmlns=&quot;http://www.ntsb.gov&quot;&gt; &lt;ROWS&gt; &lt;ROW EventId=&quot;20140816X62709&quot; InvestigationType=&quot;Accident&quot; AccidentNumber=&quot;WPR14CA348&quot; EventDate=&quot;08/16/2014&quot; Location=&quot;Opheim, MT&quot; Country=&quot;United States&quot; Latitude=&quot;&quot; Longitude=&quot;&quot; AirportCode=&quot;&quot; AirportName=&quot;&quot; InjurySeverity=&quot;&quot; AircraftDamage=&quot;&quot; AircraftCategory=&quot;&quot; RegistrationNumber=&quot;N4709Z&quot; Make=&quot;PIPER&quot; Model=&quot;PA 22-108&quot; AmateurBuilt=&quot;&quot; NumberOfEngines=&quot;&quot; EngineType=&quot;&quot; FARDescription=&quot;&quot; Schedule=&quot;&quot; PurposeOfFlight=&quot;&quot; AirCarrier=&quot;&quot; TotalFatalInjuries=&quot;&quot; TotalSeriousInjuries=&quot;&quot; TotalMinorInjuries=&quot;&quot; TotalUninjured=&quot;&quot; WeatherCondition=&quot;&quot; BroadPhaseOfFlight=&quot;&quot; ReportStatus=&quot;Preliminary&quot; PublicationDate=&quot;&quot; /&gt; &lt;ROW EventId=&quot;20140813X65210&quot; InvestigationType=&quot;Accident&quot; AccidentNumber=&quot;WPR14LA345&quot; EventDate=&quot;2014-08-13&quot; Location=&quot;Salmon, ID&quot; Country=&quot;United States&quot; Latitude=&quot;45.120834&quot; Longitude=&quot;-113.875278&quot; AirportCode=&quot;KSMN&quot; AirportName=&quot;Lemhi County Airport&quot; InjurySeverity=&quot;Non-Fatal&quot; AircraftDamage=&quot;Substantial&quot; AircraftCategory=&quot;Airplane&quot; RegistrationNumber=&quot;N2190H&quot; Make=&quot;PIPER&quot; Model=&quot;PA 28-236&quot; AmateurBuilt=&quot;No&quot; NumberOfEngines=&quot;1&quot; EngineType=&quot;Reciprocating&quot; FARDescription=&quot;Part 91: General Aviation&quot; Schedule=&quot;&quot; PurposeOfFlight=&quot;Personal&quot; AirCarrier=&quot;&quot; TotalFatalInjuries=&quot;&quot; TotalSeriousInjuries=&quot;&quot; TotalMinorInjuries=&quot;1&quot; TotalUninjured=&quot;1&quot; WeatherCondition=&quot;VMC&quot; BroadPhaseOfFlight=&quot;&quot; ReportStatus=&quot;Preliminary&quot; PublicationDate=&quot;2014-08-16&quot; /&gt; &lt;/ROWS&gt; &lt;/DATA&gt;
+<pre><code>## &lt;DATA xmlns=&quot;http://www.ntsb.gov&quot;&gt;
+## &lt;ROWS&gt;
+## &lt;ROW EventId=&quot;20140816X62709&quot; EventDate=&quot;08/16/2014&quot; Location=&quot;Opheim, MT&quot; Country=&quot;United States&quot; Latitude=&quot;&quot; Longitude=&quot;&quot; AirportCode=&quot;&quot; AirportName=&quot;&quot; InjurySeverity=&quot;&quot; AircraftDamage=&quot;&quot; AircraftCategory=&quot;&quot; RegistrationNumber=&quot;N4709Z&quot; Make=&quot;PIPER&quot; Model=&quot;PA 22-108&quot; AmateurBuilt=&quot;&quot; NumberOfEngines=&quot;&quot; EngineType=&quot;&quot; FARDescription=&quot;&quot; Schedule=&quot;&quot; PurposeOfFlight=&quot;&quot; AirCarrier=&quot;&quot; TotalFatalInjuries=&quot;&quot; TotalSeriousInjuries=&quot;&quot; TotalMinorInjuries=&quot;&quot; TotalUninjured=&quot;&quot; WeatherCondition=&quot;&quot; BroadPhaseOfFlight=&quot;&quot; ReportStatus=&quot;Preliminary&quot; PublicationDate=&quot;&quot; /&gt;
+## &lt;ROW EventId=&quot;20140813X65210&quot; EventDate=&quot;2014-08-13&quot; Location=&quot;Salmon, ID&quot; Country=&quot;United States&quot; Latitude=&quot;45.120834&quot; Longitude=&quot;-113.875278&quot; AirportCode=&quot;KSMN&quot; AirportName=&quot;Lemhi County Airport&quot; InjurySeverity=&quot;Non-Fatal&quot; AircraftDamage=&quot;Substantial&quot; AircraftCategory=&quot;Airplane&quot; RegistrationNumber=&quot;N2190H&quot; Make=&quot;PIPER&quot; Model=&quot;PA 28-236&quot; AmateurBuilt=&quot;No&quot; NumberOfEngines=&quot;1&quot; EngineType=&quot;Reciprocating&quot; FARDescription=&quot;Part 91: General Aviation&quot; Schedule=&quot;&quot; PurposeOfFlight=&quot;Personal&quot; AirCarrier=&quot;&quot; TotalFatalInjuries=&quot;&quot; TotalSeriousInjuries=&quot;&quot; TotalMinorInjuries=&quot;1&quot; TotalUninjured=&quot;1&quot; WeatherCondition=&quot;VMC&quot; BroadPhaseOfFlight=&quot;&quot; ReportStatus=&quot;Preliminary&quot; PublicationDate=&quot;2014-08-16&quot; /&gt;
+## &lt;/ROWS&gt;
+## &lt;/DATA&gt;
 </code></pre>
 
   </article>
@@ -109,17 +114,46 @@ out &lt;- data.frame(t(attrs))
 
 }
 
-out$EventDate
-</code></pre>
-
-<pre><code>## [1] &quot;08/16/2014&quot; &quot;08/13/2014&quot;
-</code></pre>
-
-<pre><code class="r">converMixedDate(out$EventDate)
+converMixedDate(out$EventDate)
 </code></pre>
 
 <pre><code>## [1] &quot;2014-08-16 MSK&quot; &quot;2014-08-13 MSK&quot;
 </code></pre>
+
+<p>Ignore timezone for now, it is not used later</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Data Cleanup</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>When I found that there are still few dates was not processed properly I decided ti exclude them from data frame</p>
+
+<pre><code class="r"># Still have a mess in dates. Just clean them up for now
+out &lt;- out[ !is.na(out$P_Date) &amp; !is.na(out$E_Date),]
+
+out$investigationTimeDays &lt;- as.numeric(out$P_Date - out$E_Date) / 24/3600
+
+# cleanup some more inconsystencies
+out &lt;- out[out$investigationTimeDays&gt;0,]
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="id" style="background:;">
+  <hgroup>
+    <h2>Results</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Now I can look at plots like this</p>
+
+<p><a href="http://alexander.shinyapps.io/avia_project">http://alexander.shinyapps.io/avia_project</a></p>
 
   </article>
   <!-- Presenter Notes -->
@@ -162,8 +196,20 @@ out$EventDate
     </li>
     <li>
       <a href="#" target="_self" rel='tooltip' 
-        data-slide=5 title=''>
+        data-slide=5 title='Data Cleanup'>
          5
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=6 title='Results'>
+         6
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=7 title=''>
+         7
       </a>
     </li>
   </ul>

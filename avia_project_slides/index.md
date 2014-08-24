@@ -26,11 +26,16 @@ Using Google search I found some relevant open data here http://catalog.data.gov
 XML file is pretty big, so here you can see how it looks like in general:
 
 ```r
-cat(paste(readLines("AviationData_sample.xml"), sep="\n"))
+skipout<-lapply(readLines("AviationData_sample.xml"), function(x) cat(paste0(x, "\n")))
 ```
 
 ```
-## <DATA xmlns="http://www.ntsb.gov"> <ROWS> <ROW EventId="20140816X62709" InvestigationType="Accident" AccidentNumber="WPR14CA348" EventDate="08/16/2014" Location="Opheim, MT" Country="United States" Latitude="" Longitude="" AirportCode="" AirportName="" InjurySeverity="" AircraftDamage="" AircraftCategory="" RegistrationNumber="N4709Z" Make="PIPER" Model="PA 22-108" AmateurBuilt="" NumberOfEngines="" EngineType="" FARDescription="" Schedule="" PurposeOfFlight="" AirCarrier="" TotalFatalInjuries="" TotalSeriousInjuries="" TotalMinorInjuries="" TotalUninjured="" WeatherCondition="" BroadPhaseOfFlight="" ReportStatus="Preliminary" PublicationDate="" /> <ROW EventId="20140813X65210" InvestigationType="Accident" AccidentNumber="WPR14LA345" EventDate="2014-08-13" Location="Salmon, ID" Country="United States" Latitude="45.120834" Longitude="-113.875278" AirportCode="KSMN" AirportName="Lemhi County Airport" InjurySeverity="Non-Fatal" AircraftDamage="Substantial" AircraftCategory="Airplane" RegistrationNumber="N2190H" Make="PIPER" Model="PA 28-236" AmateurBuilt="No" NumberOfEngines="1" EngineType="Reciprocating" FARDescription="Part 91: General Aviation" Schedule="" PurposeOfFlight="Personal" AirCarrier="" TotalFatalInjuries="" TotalSeriousInjuries="" TotalMinorInjuries="1" TotalUninjured="1" WeatherCondition="VMC" BroadPhaseOfFlight="" ReportStatus="Preliminary" PublicationDate="2014-08-16" /> </ROWS> </DATA>
+## <DATA xmlns="http://www.ntsb.gov">
+## <ROWS>
+## <ROW EventId="20140816X62709" EventDate="08/16/2014" Location="Opheim, MT" Country="United States" Latitude="" Longitude="" AirportCode="" AirportName="" InjurySeverity="" AircraftDamage="" AircraftCategory="" RegistrationNumber="N4709Z" Make="PIPER" Model="PA 22-108" AmateurBuilt="" NumberOfEngines="" EngineType="" FARDescription="" Schedule="" PurposeOfFlight="" AirCarrier="" TotalFatalInjuries="" TotalSeriousInjuries="" TotalMinorInjuries="" TotalUninjured="" WeatherCondition="" BroadPhaseOfFlight="" ReportStatus="Preliminary" PublicationDate="" />
+## <ROW EventId="20140813X65210" EventDate="2014-08-13" Location="Salmon, ID" Country="United States" Latitude="45.120834" Longitude="-113.875278" AirportCode="KSMN" AirportName="Lemhi County Airport" InjurySeverity="Non-Fatal" AircraftDamage="Substantial" AircraftCategory="Airplane" RegistrationNumber="N2190H" Make="PIPER" Model="PA 28-236" AmateurBuilt="No" NumberOfEngines="1" EngineType="Reciprocating" FARDescription="Part 91: General Aviation" Schedule="" PurposeOfFlight="Personal" AirCarrier="" TotalFatalInjuries="" TotalSeriousInjuries="" TotalMinorInjuries="1" TotalUninjured="1" WeatherCondition="VMC" BroadPhaseOfFlight="" ReportStatus="Preliminary" PublicationDate="2014-08-16" />
+## </ROWS>
+## </DATA>
 ```
 
 
@@ -71,14 +76,6 @@ converMixedDate <- function(x){
   
 }
 
-out$EventDate
-```
-
-```
-## [1] "08/16/2014" "08/13/2014"
-```
-
-```r
 converMixedDate(out$EventDate)
 ```
 
@@ -86,8 +83,32 @@ converMixedDate(out$EventDate)
 ## [1] "2014-08-16 MSK" "2014-08-13 MSK"
 ```
 
+Ignore timezone for now, it is not used later
 
 --- .class #id 
 
+## Data Cleanup
+
+When I found that there are still few dates was not processed properly I decided ti exclude them from data frame
 
 
+```r
+# Still have a mess in dates. Just clean them up for now
+out <- out[ !is.na(out$P_Date) & !is.na(out$E_Date),]
+
+out$investigationTimeDays <- as.numeric(out$P_Date - out$E_Date) / 24/3600
+
+# cleanup some more inconsystencies
+out <- out[out$investigationTimeDays>0,]
+```
+
+--- .class #id 
+
+## Results
+
+Now I can look at plots like this
+
+http://alexander.shinyapps.io/avia_project
+
+
+--- .class #id 

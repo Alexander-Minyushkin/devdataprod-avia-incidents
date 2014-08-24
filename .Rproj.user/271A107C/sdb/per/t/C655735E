@@ -1,0 +1,16 @@
+{
+    "contents" : "\nlibrary(XML)\nlibrary(ggplot2)\nlibrary(shinyapps)\nlibrary(slidify)\n\nSys.setlocale(\"LC_TIME\", \"us\")\n\noptions(stringsAsFactors = FALSE)\n\nd <- xmlParse(\"AviationData.xml\")\n\nels <- getNodeSet(d, \"//x:ROW\", \"x\")\nattrs <- sapply(els, function(x) xmlAttrs(x)) \n\nout <- data.frame(t(attrs))\n\nconverMixedDate <- function(x){\n  y <- strptime(x, tz = \"\", \"%m/%d/%Y\" )\n  \n  y[is.na(y)] <- strptime(x[is.na(y)], tz = \"\", \"%Y-%m-%d\" )\n    \n  \n  y\n}\n\nout$E_Date <- converMixedDate(out$EventDate)\nout$P_Date <- converMixedDate(out$PublicationDate)\n\n# Still have a mess in dates. Just clean them up for now\nout <- out[ !is.na(out$P_Date) & !is.na(out$E_Date),]\n\nout$investigationTimeDays <- as.numeric(out$P_Date - out$E_Date) / 24/3600\n\n# cleanup some more inconsystencies\nout <- out[out$investigationTimeDays>0,]\n\nout$ReportStatus <- as.factor(out$ReportStatus)\nout$TotalFatalInjuries <- as.numeric(out$TotalFatalInjuries)\n\nhist(log10(out$investigationTimeDays))",
+    "created" : 1408800774268.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2501871101",
+    "id" : "C655735E",
+    "lastKnownWriteTime" : 1408799670,
+    "path" : "~/GitHub/devdataprod-avia-incidents/avia_project_helper.R",
+    "project_path" : "avia_project_helper.R",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "r_source"
+}
